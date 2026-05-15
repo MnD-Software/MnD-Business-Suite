@@ -148,7 +148,7 @@ export function LandingClient({ landing }: { landing: LandingData }) {
             </div>
           </motion.div>
 
-          <motion.div className="space-y-4" variants={item}>
+          <motion.div className="space-y-4 lg:space-y-5" variants={item}>
             <Card className="border border-black/10 bg-white p-4 md:p-6">
               <div className="grid gap-3 md:grid-cols-2 md:gap-4">
                 <div className="rounded-2xl border border-black/10 bg-black/[0.03] p-4">
@@ -161,6 +161,18 @@ export function LandingClient({ landing }: { landing: LandingData }) {
                   <p className="mt-2 text-sm font-medium text-black">Cross-app workflows</p>
                   <p className="mt-1 text-xs text-black/70">Tasks, alerts, and approvals connected across departments.</p>
                 </div>
+              </div>
+            </Card>
+
+            <Card className="border border-black/10 bg-white p-4 md:p-6">
+              <p className="text-xs uppercase tracking-[0.2em] text-black/55">Platform Snapshot</p>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                {landing.stats.map((stat) => (
+                  <div key={`side-${stat.label}`} className="rounded-2xl border border-black/10 bg-black/[0.02] p-3">
+                    <p className="text-lg font-semibold text-black">{stat.value}</p>
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-black/60">{stat.label}</p>
+                  </div>
+                ))}
               </div>
             </Card>
           </motion.div>
@@ -193,7 +205,7 @@ export function LandingClient({ landing }: { landing: LandingData }) {
                 <Card className="group relative overflow-hidden rounded-3xl border border-black bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:bg-black hover:text-white hover:shadow-[0_32px_90px_-28px_rgba(0,0,0,0.35)] md:p-6 md:p-8">
                   <div className="absolute inset-0 bg-transparent" />
                   <div className="relative space-y-3 md:space-y-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-black bg-white">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-black bg-white transition group-hover:border-white group-hover:bg-black">
                       <Icon className="h-5 w-5 text-black group-hover:text-white" />
                     </div>
                     <div>
