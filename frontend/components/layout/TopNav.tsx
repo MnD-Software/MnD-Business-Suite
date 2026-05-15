@@ -56,7 +56,7 @@ export function TopNav({ onOpenMenu }: { onOpenMenu?: () => void }) {
       <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
         <SmartAlerts />
         {meQ.data?.full_name && (
-          <div className="hidden text-sm text-[hsl(var(--c-muted-2))] md:block">{meQ.data.full_name}</div>
+          <div className="hidden text-sm text-black/70 dark:text-[hsl(var(--c-muted-2))] md:block">{meQ.data.full_name}</div>
         )}
         <IconButton onClick={toggle} aria-label="Toggle theme" size="sm">
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}

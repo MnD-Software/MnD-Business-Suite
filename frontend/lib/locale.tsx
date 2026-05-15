@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { backendUrl } from "@/lib/env";
 
 export type CountryLocale = {
   code: string;
@@ -71,8 +72,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
 
     async function loadRates() {
       try {
-        const base = process.env.NEXT_PUBLIC_BACKEND_URL;
-        if (!base) return;
+        const base = backendUrl();
         const res = await fetch(`${base}/api/v1/marketing/fx`);
         if (!res.ok) return;
         const data = await res.json();

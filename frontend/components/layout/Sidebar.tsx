@@ -59,7 +59,7 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "h-full overflow-hidden rounded-lg border bg-card p-2 shadow-elevate",
+        "h-full overflow-hidden rounded-lg border bg-card p-2 text-black shadow-elevate dark:text-[hsl(var(--c-text))]",
         collapsed ? "w-16" : "w-64"
       )}
     >
@@ -87,7 +87,7 @@ export function Sidebar({
             {!collapsed && (
               <div className="min-w-0 leading-tight">
                 <div className="truncate text-sm font-semibold">{meQ.data?.org_name ?? "MnD OS"}</div>
-                <div className="truncate text-xs text-muted">
+                <div className="truncate text-xs text-black/70 dark:text-muted">
                   {meQ.data?.full_name ? meQ.data.full_name : "Operations"}
                 </div>
               </div>
@@ -118,7 +118,7 @@ export function Sidebar({
         )}
 
         {/* Apps Section */}
-        <div className={cn("mt-3 px-2 text-xs font-semibold uppercase text-muted", collapsed && "sr-only")}>
+        <div className={cn("mt-3 px-2 text-xs font-semibold uppercase text-black/70 dark:text-muted", collapsed && "sr-only")}>
           Apps
         </div>
 
@@ -134,7 +134,7 @@ export function Sidebar({
                   href={item.href as any}
                   prefetch
                   className={cn(
-                    "nav-item",
+                    "nav-item text-black dark:text-[hsl(var(--c-text))]",
                     active && "active",
                     collapsed && "justify-center px-2"
                   )}
@@ -149,7 +149,7 @@ export function Sidebar({
           {/* Admin Section */}
           {admin.length > 0 && (
             <>
-              <div className={cn("mt-4 px-2 text-xs font-semibold uppercase text-muted", collapsed && "sr-only")}>
+              <div className={cn("mt-4 px-2 text-xs font-semibold uppercase text-black/70 dark:text-muted", collapsed && "sr-only")}>
                 Admin
               </div>
               <nav className="mt-1 space-y-0.5">
@@ -162,7 +162,7 @@ export function Sidebar({
                       href={item.href as any}
                       prefetch
                       className={cn(
-                        "nav-item",
+                        "nav-item text-black dark:text-[hsl(var(--c-text))]",
                         active && "active",
                         collapsed && "justify-center px-2"
                       )}
@@ -194,7 +194,7 @@ export function Sidebar({
               )}
               <div className="min-w-0 flex-1 leading-tight">
                 <div className="truncate text-sm font-medium">{meQ.data?.full_name ?? "User"}</div>
-                <div className="truncate text-xs text-muted">{meQ.data?.email ?? ""}</div>
+                <div className="truncate text-xs text-black/70 dark:text-muted">{meQ.data?.email ?? ""}</div>
               </div>
               <IconButton aria-label="Profile" size="sm">
                 <IconProfile className="h-4 w-4" />

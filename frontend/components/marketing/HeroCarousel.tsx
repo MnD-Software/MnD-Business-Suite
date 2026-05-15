@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 type Slide = {
   src: string;
@@ -11,17 +12,17 @@ type Slide = {
 
 const slides: Slide[] = [
   {
-    src: "/hero/system-login.png",
+    src: "https://res.cloudinary.com/ddvm0miqe/image/upload/v1778850891/Screenshot_2026-05-15_123909_q4e5py.png",
     title: "Welcome Experience",
     caption: "A clean, focused entry point designed for clarity and confidence.",
   },
   {
-    src: "/hero/system-dashboard.png",
+    src: "https://res.cloudinary.com/ddvm0miqe/image/upload/v1778850891/Screenshot_2026-05-15_125046_b6cpy3.png",
     title: "Unified Workspace",
     caption: "Everything important in one place, presented in a calm visual layout.",
   },
   {
-    src: "/hero/system-app-launcher.png",
+    src: "https://res.cloudinary.com/ddvm0miqe/image/upload/v1778850890/Screenshot_2026-05-15_123803_vv85jr.png",
     title: "Quick Navigation",
     caption: "Move between tools and actions quickly through a single launcher view.",
   },
@@ -59,6 +60,17 @@ export function HeroCarousel({ className = "" }: { className?: string }) {
               </p>
             </div>
           )}
+          <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-white/30 bg-black/45 px-3 py-1.5 backdrop-blur-sm">
+            <Image
+              src="/brand/mnd-symbol.svg"
+              alt="MnD"
+              width={20}
+              height={20}
+              unoptimized
+              className="object-contain"
+            />
+            <span className="text-xs font-semibold uppercase tracking-[0.16em] text-white">MnD Systems</span>
+          </div>
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/25" />
           <div className="absolute bottom-14 left-4 right-4 sm:left-7 sm:right-7 md:bottom-16">
             <p className="text-[10px] uppercase tracking-[0.28em] text-white/75 sm:text-xs">Featured Experience</p>

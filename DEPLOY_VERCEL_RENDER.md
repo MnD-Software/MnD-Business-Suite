@@ -60,7 +60,7 @@ COOKIE_SAMESITE="none"
 1. **Log in to Vercel** at https://vercel.com
 2. Click **"Add New..."** → **"Project"**
 3. Import your GitHub repository (`MnD-Business-Suite`)
-4. In the "Root Directory" field, enter: `frontend`
+4. In the "Root Directory" field, enter: `frontend` (required for this monorepo)
 5. Configure the following:
 
    | Setting | Value |
@@ -70,6 +70,12 @@ COOKIE_SAMESITE="none"
    | Output Directory | `.next` (default) |
 
 6. Click **"Deploy"**
+
+### Important Vercel Project Settings
+- **Root Directory** must be `frontend`
+- **Framework Preset** should be `Next.js`
+- Add env vars for all environments you use (`Production`, `Preview`, `Development`)
+- Redeploy after changing env vars
 
 ### Frontend Environment Variables
 After deployment, go to **Settings** → **Environment Variables** and add:

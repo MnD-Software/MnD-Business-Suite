@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import type { ComponentType } from "react";
+import { useEffect, useState, type ComponentType } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -13,6 +14,7 @@ import type { LandingData } from "@/lib/marketing";
 import { useI18n } from "@/lib/i18n";
 import {
   ArrowRight,
+  House,
   ShieldCheck,
   Zap,
   Boxes,
@@ -32,6 +34,8 @@ import {
   Building2,
   Clock3,
   MoveRight,
+  Tags,
+  LogIn,
 } from "lucide-react";
 
 const appIcons: Record<string, ComponentType<{ className?: string }>> = {
@@ -66,9 +70,18 @@ const trustPills = [
 
 export function LandingClient({ landing }: { landing: LandingData }) {
   const { t } = useI18n();
+  const pathname = usePathname();
+  const [hash, setHash] = useState("");
+
+  useEffect(() => {
+    const syncHash = () => setHash(window.location.hash);
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, []);
 
   return (
-    <div className="page-transition min-h-screen bg-white text-black scroll-smooth">
+    <div className="page-transition min-h-screen bg-white pb-24 text-black scroll-smooth md:pb-0">
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-white" />
 
@@ -324,6 +337,25 @@ export function LandingClient({ landing }: { landing: LandingData }) {
           </div>
         </div>
       </footer>
+
+      <nav className="fixed bottom-3 left-1/2 z-50 flex w-[calc(100%-1rem)] max-w-sm -translate-x-1/2 items-center justify-between rounded-2xl border border-black bg-white p-1.5 shadow-[0_16px_42px_-20px_rgba(0,0,0,0.45)] md:hidden">
+        <Link href="/" className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-medium ${pathname === "/" && !hash ? "bg-black text-white" : "text-black/75"}`}>
+          <House className="h-4 w-4" />
+          <span>Home</span>
+        </Link>
+        <Link href="#apps" className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-medium ${hash === "#apps" ? "bg-black text-white" : "text-black/75"}`}>
+          <Boxes className="h-4 w-4" />
+          <span>Apps</span>
+        </Link>
+        <Link href="#pricing" className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-medium ${hash === "#pricing" ? "bg-black text-white" : "text-black/75"}`}>
+          <Tags className="h-4 w-4" />
+          <span>Pricing</span>
+        </Link>
+        <Link href="/login" className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-medium ${pathname.startsWith("/login") ? "bg-black text-white" : "text-black/75"}`}>
+          <LogIn className="h-4 w-4" />
+          <span>Login</span>
+        </Link>
+      </nav>
     </div>
   );
 }
