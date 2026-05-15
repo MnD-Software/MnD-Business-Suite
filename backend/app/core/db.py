@@ -3,9 +3,16 @@ from __future__ import annotations
 import asyncio
 from typing import AsyncIterator
 
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.pool import NullPool
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.pool import NullPool
+
 
 from app.core.config import settings
 
@@ -13,19 +20,30 @@ from app.core.config import settings
 class Base(DeclarativeBase):
     pass
 
-
 _is_sqlite = settings.database_url.startswith("sqlite")
 
-engine: AsyncEngine = create_async_engine(
-    settings.database_url,
-    pool_pre_ping=True,
-    poolclass=NullPool if _is_sqlite else None,
-    pool_size=None if _is_sqlite else settings.db_pool_size,
-    max_overflow=None if _is_sqlite else settings.db_max_overflow,
-    pool_timeout=None if _is_sqlite else settings.db_pool_timeout,
-    pool_recycle=None if _is_sqlite else settings.db_pool_recycle_seconds,
+
+if _is_sqlite:
+    engine: AsyncEngine = create_async_engine(
+        settings.database_url,
+        poolclass=NullPool,
+    )
+else:
+    engine: AsyncEngine = create_async_engine(
+        settings.database_url,
+        poolclass=None,
+        pool_size=settings.db_pool_size,
+        max_overflow=settings.db_max_overflow,
+        pool_timeout=settings.db_pool_timeout,
+        pool_recycle=settings.db_pool_recycle_seconds,
+        pool_pre_ping=True,
+    )
+SessionLocal = async_sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
 )
-SessionLocal = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
+
 
 _models_initialized = False
 _models_lock = asyncio.Lock()
