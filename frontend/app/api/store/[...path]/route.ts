@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { backendUrl } from "@/lib/env";
+import { fetchBackend } from "@/lib/backend-fetch";
 
 async function handler(req: Request, ctx: { params: { path: string[] } }) {
   const p = ctx.params.path.join("/");
@@ -14,15 +15,13 @@ async function handler(req: Request, ctx: { params: { path: string[] } }) {
   if (req.method !== "GET" && req.method !== "HEAD") init.body = await req.text();
 
   try {
-    const res = await fetch(target, init);
+    const res = await fetchBackend(target, init);
     const contentType = res.headers.get("content-type") ?? "";
     const body = contentType.includes("application/json") ? await res.json() : await res.text();
     return NextResponse.json(body, { status: res.status });
-  } catch (e) {
-    return NextResponse.json(
-      { error: { message: "Failed to connect to backend" } },
-      { status: 502 }
-    );
+  } catch (error) {
+    const isTimeout = error instanceof Error && error.message.includes("timed out");
+    return NextResponse.json({ error: { message: isTimeout ? "Backend request timed out" : "Failed to connect to backend" } }, { status: isTimeout ? 504 : 502 });
   }
 }
 

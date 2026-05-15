@@ -237,7 +237,7 @@ export default function PromotionsPage() {
                     {promo.discount_type === "percentage" ? (
                       <span className="font-semibold">{promo.discount_value}% OFF</span>
                     ) : (
-                      <span className="font-semibold">KES {promo.discount_value} OFF</span>
+                      <span className="font-semibold">KSH {promo.discount_value} OFF</span>
                     )}
                     {isExpired(promo) && (
                       <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">Expired</span>
@@ -251,7 +251,7 @@ export default function PromotionsPage() {
                   </div>
                   <p className="text-gray-600 mt-1">{promo.description || "No description"}</p>
                   <div className="text-sm text-gray-500 mt-2 flex gap-4">
-                    <span>Min order: KES {promo.min_order_amount.toLocaleString()}</span>
+                    <span>Min order: KSH {promo.min_order_amount.toLocaleString()}</span>
                     <span>Uses: {promo.used_count}{promo.max_uses ? ` / ${promo.max_uses}` : " (unlimited)"}</span>
                     <span>Valid: {formatDate(promo.starts_at)} - {formatDate(promo.expires_at)}</span>
                   </div>
@@ -329,7 +329,7 @@ export default function PromotionsPage() {
                     className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="percentage">Percentage (%)</option>
-                    <option value="fixed">Fixed Amount (KES)</option>
+                    <option value="fixed">Fixed Amount (KSH)</option>
                   </select>
                 </div>
                 <div>
@@ -352,7 +352,7 @@ export default function PromotionsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Min Order (KES)</label>
+                  <label className="block text-sm font-medium mb-1">Min Order (KSH)</label>
                   <Input
                     type="number"
                     value={form.min_order_amount}

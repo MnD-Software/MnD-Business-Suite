@@ -76,7 +76,7 @@ export default function ProductsPage() {
       errors.reorder_level = "Reorder level cannot be negative";
     }
     if (!form.currency || form.currency.length !== 3) {
-      errors.currency = "Currency must be 3-letter code (e.g., KES, USD)";
+      errors.currency = "Currency must be 3-letter code (e.g., KES)";
     }
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;

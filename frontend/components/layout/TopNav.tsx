@@ -1,19 +1,33 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { LogOut, Moon, PanelLeftOpen, Search, Sun } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";
 import { useTheme } from "@/lib/theme";
-import { AppLauncher } from "@/components/layout/AppLauncher";
 import { useMe } from "@/lib/me";
-import { CommandPaletteModal, SmartAlerts } from "@/components/command-center";
+import { Logo } from "@/components/ui/Logo";
+
+const AppLauncher = dynamic(
+  () => import("@/components/layout/AppLauncher").then((m) => m.AppLauncher),
+  { ssr: false }
+);
+const CommandPaletteModal = dynamic(
+  () => import("@/components/command-center").then((m) => m.CommandPaletteModal),
+  { ssr: false }
+);
+const SmartAlerts = dynamic(
+  () => import("@/components/command-center").then((m) => m.SmartAlerts),
+  { ssr: false }
+);
 
 export function TopNav({ onOpenMenu }: { onOpenMenu?: () => void }) {
   const router = useRouter();
   const { theme, toggle } = useTheme();
   const meQ = useMe();
+  const reduceMotion = useReducedMotion();
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -21,7 +35,12 @@ export function TopNav({ onOpenMenu }: { onOpenMenu?: () => void }) {
   }
 
   return (
-    <div className="surface noise flex items-center justify-between gap-4 rounded-2xl px-4 py-3 shadow-glass">
+    <motion.div
+      initial={reduceMotion ? false : { opacity: 0, y: -8 }}
+      animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      transition={reduceMotion ? undefined : { duration: 0.18, ease: "easeOut" }}
+      className="surface noise flex flex-wrap items-center justify-between gap-2 rounded-2xl px-3 py-2.5 shadow-glass sm:px-4 sm:py-3"
+    >
       <div className="flex min-w-0 flex-1 items-center gap-2">
         {onOpenMenu && (
           <div className="lg:hidden">
@@ -30,18 +49,11 @@ export function TopNav({ onOpenMenu }: { onOpenMenu?: () => void }) {
             </IconButton>
           </div>
         )}
-        <Link
-          href="/dashboard"
-          className="hairline flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[color-mix(in_oklab,hsl(var(--c-surface))_70%,transparent)]"
-          aria-label="Home"
-          prefetch
-        >
-          <img src="/brand/mnd-symbol.svg" alt="MnD" className="h-7 w-7" />
-        </Link>
+        <Logo size="md" showText />
         <AppLauncher me={meQ.data ?? null} />
         <CommandPaletteModal />
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
         <SmartAlerts />
         {meQ.data?.full_name && (
           <div className="hidden text-sm text-[hsl(var(--c-muted-2))] md:block">{meQ.data.full_name}</div>
@@ -49,11 +61,11 @@ export function TopNav({ onOpenMenu }: { onOpenMenu?: () => void }) {
         <IconButton onClick={toggle} aria-label="Toggle theme" size="sm">
           {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
         </IconButton>
-        <Button variant="ghost" onClick={logout} size="sm">
+        <Button variant="ghost" onClick={logout} size="sm" className="px-2 sm:px-3">
           <LogOut className="h-4 w-4" />
-          Logout
+          <span className="hidden sm:inline">Logout</span>
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }

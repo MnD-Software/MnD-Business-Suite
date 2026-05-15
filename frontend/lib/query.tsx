@@ -7,6 +7,9 @@ type CacheValue = { data: unknown; at: number };
 type QueryCtx = {
   get: (key: string) => CacheValue | undefined;
   set: (key: string, value: CacheValue) => void;
+  getInFlight: <T>(key: string) => Promise<T> | undefined;
+  setInFlight: <T>(key: string, promise: Promise<T>) => void;
+  clearInFlight: (key: string) => void;
   invalidate: (prefix?: string) => void;
 };
 
@@ -14,6 +17,7 @@ const Ctx = createContext<QueryCtx | null>(null);
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
   const cache = useRef(new Map<string, CacheValue>());
+  const inflight = useRef(new Map<string, Promise<unknown>>());
   const [, bump] = useState(0);
 
   const value = useMemo<QueryCtx>(
@@ -22,6 +26,13 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
       set: (key, v) => {
         cache.current.set(key, v);
         bump((x) => x + 1);
+      },
+      getInFlight: (key) => inflight.current.get(key) as Promise<any> | undefined,
+      setInFlight: (key, promise) => {
+        inflight.current.set(key, promise);
+      },
+      clearInFlight: (key) => {
+        inflight.current.delete(key);
       },
       invalidate: (prefix) => {
         if (!prefix) cache.current.clear();
@@ -51,7 +62,15 @@ export function useQuery<T>(key: string, queryFn: () => Promise<T>) {
     setLoading(true);
     setError(null);
     try {
-      const next = await queryFn();
+      const existing = queryCtx.getInFlight<T>(key);
+      const pending =
+        existing ??
+        queryFn().finally(() => {
+          queryCtx.clearInFlight(key);
+        });
+      if (!existing) queryCtx.setInFlight(key, pending);
+
+      const next = await pending;
       queryCtx.set(key, { data: next, at: Date.now() });
       setData(next);
     } catch (e) {

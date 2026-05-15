@@ -1,11 +1,13 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { backendUrl, cookieSecure } from "@/lib/env";
+import { fetchBackend } from "@/lib/backend-fetch";
+
+const REQUEST_TIMEOUT_MS = 12000;
 
 async function forward(req: Request, path: string, accessToken: string | undefined) {
   const url = new URL(req.url);
   const target = `${backendUrl()}/api/v1/${path}${url.search}`;
-
   const headers = new Headers(req.headers);
   headers.set("accept", "application/json");
   headers.delete("host");
@@ -14,25 +16,27 @@ async function forward(req: Request, path: string, accessToken: string | undefin
   const init: RequestInit = {
     method: req.method,
     headers,
-    cache: "no-store"
   };
 
   if (req.method !== "GET" && req.method !== "HEAD") {
     init.body = await req.text();
   }
 
-  return fetch(target, init);
+  return fetchBackend(target, init, REQUEST_TIMEOUT_MS);
 }
 
 async function refreshTokens(): Promise<{ access: string; refresh: string } | null> {
   const refresh = cookies().get("refresh_token")?.value;
   if (!refresh) return null;
-  const res = await fetch(`${backendUrl()}/api/v1/auth/refresh`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh_token: refresh }),
-    cache: "no-store"
-  });
+  const res = await fetchBackend(
+    `${backendUrl()}/api/v1/auth/refresh`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: refresh }),
+    },
+    REQUEST_TIMEOUT_MS
+  );
   const data = await res.json().catch(() => null);
   if (!res.ok) return null;
   return { access: data.access_token as string, refresh: data.refresh_token as string };
@@ -42,11 +46,24 @@ async function handler(req: Request, ctx: { params: { path: string[] } }) {
   const p = ctx.params.path.join("/");
   const access = cookies().get("access_token")?.value;
 
-  let res = await forward(req, p, access);
+  let res: Response;
+  try {
+    res = await forward(req, p, access);
+  } catch (error) {
+    const isTimeout = error instanceof Error && error.message.includes("timed out");
+    return NextResponse.json({ error: isTimeout ? "Backend request timed out" : "Failed to reach backend" }, { status: isTimeout ? 504 : 502 });
+  }
   let refreshed: { access: string; refresh: string } | null = null;
   if (res.status === 401) {
     refreshed = await refreshTokens();
-    if (refreshed) res = await forward(req, p, refreshed.access);
+    if (refreshed) {
+      try {
+        res = await forward(req, p, refreshed.access);
+      } catch (error) {
+        const isTimeout = error instanceof Error && error.message.includes("timed out");
+        return NextResponse.json({ error: isTimeout ? "Backend request timed out" : "Failed to reach backend" }, { status: isTimeout ? 504 : 502 });
+      }
+    }
   }
 
   const contentType = res.headers.get("content-type") ?? "";

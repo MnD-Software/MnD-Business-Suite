@@ -127,10 +127,7 @@ export function AICommandCenter() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 animate-pulse rounded-full bg-emerald-500"></span>
-          <span className="text-xs font-medium text-emerald-500">Live</span>
-        </div>
+        <div />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
@@ -159,9 +156,9 @@ export function AICommandCenter() {
                     insight.trend === "warning" && "text-amber-500",
                     insight.trend === "neutral" && "text-muted-2"
                   )}>
-                    {insight.trend === "up" && "↑ Positive"}
-                    {insight.trend === "warning" && "⚠ Action needed"}
-                    {insight.trend === "neutral" && "→ Monitor"}
+                    {insight.trend === "up" && "Positive"}
+                    {insight.trend === "warning" && "Action needed"}
+                    {insight.trend === "neutral" && "Monitor"}
                   </div>
                 </div>
               </div>
@@ -245,7 +242,7 @@ export function CommandPaletteModal() {
     })),
     { id: "ai-revenue", label: "Show revenue trends", icon: IconTrendingUp, category: "ai", action: () => window.open("/analytics?metric=revenue", "_blank"), keywords: ["analyze", "sales", "income"] },
     { id: "ai-forecast", label: "Predict next month sales", icon: IconCalendar, category: "ai", action: () => window.open("/insights?forecast=true", "_blank"), keywords: ["future", "predictions", "ai"] },
-    { id: "ai-inventory", label: "Check inventory status", icon: IconBox, category: "ai", action: () => window.open("/inventory?alert=true", "_blank"), keywords: ["stock", "low"] },
+    { id: "ai-inventory", label: "Check inventory status", icon: IconBox, category: "ai", action: () => window.open("/inventory/products?alert=true", "_blank"), keywords: ["stock", "low"] },
   ];
 
   const filteredItems = query.trim()
@@ -300,7 +297,7 @@ export function CommandPaletteModal() {
         <span className="hidden sm:inline">Search apps, actions...</span>
         <span className="sm:hidden">Search...</span>
         <kbd className="ml-auto hidden rounded bg-surface-2 px-1.5 py-0.5 text-xs font-mono sm:inline-block">
-          ⌘K
+          Ctrl+K
         </kbd>
       </button>
 
@@ -407,8 +404,8 @@ export function CommandPaletteModal() {
 
               <div className="flex items-center justify-between border-t border-border px-4 py-2 text-xs text-muted">
                 <div className="flex items-center gap-4">
-                  <span><kbd className="rounded bg-surface-2 px-1 py-0.5">↑↓</kbd> Navigate</span>
-                  <span><kbd className="rounded bg-surface-2 px-1 py-0.5">↵</kbd> Select</span>
+                  <span><kbd className="rounded bg-surface-2 px-1 py-0.5">Up/Down</kbd> Navigate</span>
+                  <span><kbd className="rounded bg-surface-2 px-1 py-0.5">Enter</kbd> Select</span>
                   <span><kbd className="rounded bg-surface-2 px-1 py-0.5">esc</kbd> Close</span>
                 </div>
                 <span className="flex items-center gap-1"><Sparkles className="h-3 w-3" /> AI Powered</span>
@@ -497,8 +494,8 @@ interface Alert {
 
 const mockAlerts: Alert[] = [
   { id: "1", type: "warning", title: "Low Stock Alert", message: "Coffee Beans inventory below threshold", time: "2 min ago", read: false },
-  { id: "2", type: "success", title: "Payment Received", message: "KES 45,000 from Acme Corp", time: "15 min ago", read: false },
-  { id: "3", type: "info", title: "New Order", message: "Order #1247 - KES 12,500", time: "1 hour ago", read: true },
+  { id: "2", type: "success", title: "Payment Received", message: "KSH 45,000 from Acme Corp", time: "15 min ago", read: false },
+  { id: "3", type: "info", title: "New Order", message: "Order #1247 - KSH 12,500", time: "1 hour ago", read: true },
   { id: "4", type: "danger", title: "Payment Failed", message: "Invoice #892 - Retry needed", time: "3 hours ago", read: false },
 ];
 

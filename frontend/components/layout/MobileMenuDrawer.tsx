@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Moon, Sun, X } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";
@@ -23,18 +22,12 @@ export function MobileMenuDrawer({ open, onClose }: { open: boolean; onClose: ()
   }
 
   return (
-    <AnimatePresence>
+    <>
       {open && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/35" onClick={onClose} role="button" aria-label="Close menu" />
-          <motion.div
-            initial={{ x: -18, opacity: 0, scale: 0.98 }}
-            animate={{ x: 0, opacity: 1, scale: 1 }}
-            exit={{ x: -10, opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.18, ease: [0.2, 0.8, 0.2, 1] }}
-            className="absolute left-3 top-3 w-[min(420px,calc(100vw-1.5rem))]"
-          >
-            <Card className="p-4">
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-transparent" onClick={onClose} role="button" aria-label="Close menu" />
+          <div className="absolute left-2 top-2 w-[min(360px,calc(100vw-1rem))] sm:left-3 sm:top-3 sm:w-[min(380px,calc(100vw-1.5rem))]">
+            <Card className="max-h-[calc(100dvh-1rem)] overflow-y-auto border-border/80 bg-surface/95 p-3 shadow-elevate sm:max-h-[calc(100dvh-1.5rem)] sm:p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-sm font-semibold">{meQ.data?.org_name ?? "MnD OS"}</div>
@@ -82,9 +75,9 @@ export function MobileMenuDrawer({ open, onClose }: { open: boolean; onClose: ()
                 </Button>
               </div>
             </Card>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }

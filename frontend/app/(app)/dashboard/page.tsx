@@ -27,13 +27,13 @@ import {
 } from "recharts";
 
 const CHART_COLORS = {
-  primary: "#6366F1",
-  secondary: "#22D3EE",
-  tertiary: "#F97316",
-  success: "#22C55E",
-  danger: "#EF4444",
-  purple: "#A855F7",
-  pink: "#EC4899"
+  primary: "#E5E7EB",
+  secondary: "#D1D5DB",
+  tertiary: "#9CA3AF",
+  success: "#A3A3A3",
+  danger: "#737373",
+  purple: "#F3F4F6",
+  pink: "#6B7280"
 };
 
 type RevenuePoint = { month: string; revenue: number; expenses: number };
@@ -158,7 +158,7 @@ function RevenueChart({ data }: { data: RevenuePoint[] }) {
               tick={{ fill: "hsl(var(--c-muted))", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
-              tickFormatter={(value) => `KES${(value / 1000).toFixed(0)}k`}
+              tickFormatter={(value) => `KSH${(value / 1000).toFixed(0)}k`}
             />
             <Tooltip
               contentStyle={{
@@ -470,7 +470,6 @@ export default function DashboardPage() {
           <div>
             <div className="flex items-center gap-2">
               <div className="text-xl font-semibold tracking-tight">{greeting}</div>
-              <Badge variant="accent" className="hidden md:inline-flex">Live</Badge>
             </div>
             <div className="mt-1 text-sm text-[hsl(var(--c-muted-2))]">
               Here's what's happening with your business today.

@@ -70,10 +70,14 @@ export default function PricingClient({ data }: { data: PricingData }) {
     formatCurrency(billingCycle === "monthly" ? monthly : yearly ?? monthly * 10);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="page-transition min-h-screen bg-white text-black">
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-0 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,0,0,0.08),transparent_70%)] blur-3xl" />
+        <div className="absolute right-0 top-40 h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle,rgba(0,0,0,0.06),transparent_70%)] blur-3xl" />
+      </div>
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="glass-nav sticky top-0 z-50">
+        <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
           <div className="flex items-center justify-between">
             <Logo showText />
             <CountrySelector />
@@ -81,23 +85,23 @@ export default function PricingClient({ data }: { data: PricingData }) {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="text-center mt-4">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="mb-4 text-4xl font-semibold text-black md:text-5xl">
             {t("nav_pricing")}
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="mb-8 text-lg text-black/70 md:text-xl">
             Scale your export business with our comprehensive platform
           </p>
 
           {/* Billing Toggle */}
-          <div className="inline-flex items-center bg-gray-100 rounded-lg p-1 mb-8">
+          <div className="mb-8 inline-flex items-center rounded-xl border border-black/10 bg-white p-1 shadow-sm">
             <button
               onClick={() => setBillingCycle("monthly")}
               className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
                 billingCycle === "monthly"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "bg-black text-white shadow-sm"
+                  : "text-black/60 hover:text-black"
               }`}
             >
               Monthly
@@ -106,12 +110,12 @@ export default function PricingClient({ data }: { data: PricingData }) {
               onClick={() => setBillingCycle("yearly")}
               className={`px-6 py-2 rounded-md text-sm font-medium transition-colors relative ${
                 billingCycle === "yearly"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "bg-black text-white shadow-sm"
+                  : "text-black/60 hover:text-black"
               }`}
             >
               Yearly
-              <Badge className="absolute -top-2 -right-2 bg-green-500 text-white text-xs">
+              <Badge className="absolute -right-2 -top-2 bg-black text-white text-xs">
                 Save up to 25%
               </Badge>
             </button>
@@ -120,7 +124,7 @@ export default function PricingClient({ data }: { data: PricingData }) {
       </div>
 
       {/* Plans Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {data.plans.map((plan) => {
             const Icon = planIcons[plan.name as keyof typeof planIcons] || Star;
@@ -130,14 +134,14 @@ export default function PricingClient({ data }: { data: PricingData }) {
             return (
               <Card
                 key={plan.name}
-                className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl ${
+                className={`glass-card relative overflow-hidden border border-black/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_-24px_rgba(0,0,0,0.2)] ${
                   plan.featured
-                    ? "ring-2 ring-blue-500 shadow-lg scale-105"
-                    : "hover:scale-102"
+                    ? "scale-[1.02] ring-1 ring-black/20 shadow-lg"
+                    : ""
                 }`}
               >
                 {plan.featured && (
-                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-center py-2 text-sm font-medium">
+                  <div className="absolute left-0 right-0 top-0 bg-black py-2 text-center text-sm font-medium text-white">
                     Most Popular
                   </div>
                 )}
@@ -145,28 +149,28 @@ export default function PricingClient({ data }: { data: PricingData }) {
                 <div className="p-6 pt-8">
                   {/* Plan Header */}
                   <div className="text-center mb-6">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-4">
-                      <Icon className="w-6 h-6 text-blue-600" />
+                    <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-black/10">
+                      <Icon className="h-6 w-6 text-black" />
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    <h3 className="mb-2 text-2xl font-semibold text-black">
                       {plan.name}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-4">
+                    <p className="mb-4 text-sm text-black/60">
                       {plan.tagline}
                     </p>
 
                     {/* Pricing */}
                     <div className="mb-4">
                       <div className="flex items-baseline justify-center">
-                        <span className="text-4xl font-bold text-gray-900">
+                        <span className="text-4xl font-semibold text-black">
                           {formatCurrency(price)}
                         </span>
-                        <span className="text-gray-600 ml-2">
+                        <span className="ml-2 text-black/60">
                           /{billingCycle === "monthly" ? "mo" : "yr"}
                         </span>
                       </div>
                       {billingCycle === "yearly" && savings > 0 && (
-                        <div className="text-green-600 text-sm font-medium mt-1">
+                        <div className="mt-1 text-sm font-medium text-black/70">
                           Save {savings}%
                         </div>
                       )}
@@ -177,7 +181,7 @@ export default function PricingClient({ data }: { data: PricingData }) {
                   <div className="space-y-3 mb-6">
                     {Object.entries(plan.limits).map(([key, value]) => (
                       <div key={key} className="flex justify-between text-sm">
-                        <span className="text-gray-600">{key.replace(/_/g, " ")}:</span>
+                        <span className="text-black/60">{key.replace(/_/g, " ")}:</span>
                         <span className="font-medium">{formatLimit(value)}</span>
                       </div>
                     ))}
@@ -187,8 +191,8 @@ export default function PricingClient({ data }: { data: PricingData }) {
                   <div className="space-y-2 mb-6">
                     {plan.features.map((feature) => (
                       <div key={feature} className="flex items-center text-sm">
-                        <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                        <span className="text-gray-900">{feature}</span>
+                        <Check className="mr-2 h-4 w-4 flex-shrink-0 text-black" />
+                        <span className="text-black">{feature}</span>
                       </div>
                     ))}
                   </div>
@@ -198,10 +202,10 @@ export default function PricingClient({ data }: { data: PricingData }) {
                     onClick={() => handleSelectPlan(plan.name)}
                     className={`w-full ${
                       plan.featured
-                        ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                        ? "bg-black text-white hover:bg-black/90"
                         : ""
                     }`}
-                    variant={plan.featured ? "default" : "outline"}
+                    variant={plan.featured ? "primary" : "secondary"}
                   >
                     Choose Plan
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -215,28 +219,28 @@ export default function PricingClient({ data }: { data: PricingData }) {
         {/* Bundle Offers */}
         <div className="mt-16">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <h2 className="mb-3 text-3xl font-semibold text-black">
               Best-Selling Bundles
             </h2>
-            <p className="text-gray-600">
+            <p className="text-black/60">
               Curated app combinations with automatic discounts
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.bundles.map((bundle) => (
-              <Card key={bundle.bundle_id} className="p-6">
+              <Card key={bundle.bundle_id} className="glass-card border border-black/10 p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900">{bundle.name}</h3>
-                    <p className="text-sm text-gray-600">{bundle.description}</p>
+                    <h3 className="text-xl font-semibold text-black">{bundle.name}</h3>
+                    <p className="text-sm text-black/60">{bundle.description}</p>
                   </div>
-                  <Badge className="bg-green-500 text-white text-xs">{bundle.highlight}</Badge>
+                  <Badge className="bg-black text-white text-xs">{bundle.highlight}</Badge>
                 </div>
                 <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-3xl font-bold text-gray-900">
+                    <span className="text-3xl font-semibold text-black">
                     {formatPrice(bundle.monthly)}
                   </span>
-                  <span className="text-sm text-gray-500">
+                    <span className="text-sm text-black/50">
                     /{billingCycle === "monthly" ? "mo" : "yr"}
                   </span>
                 </div>
@@ -252,39 +256,39 @@ export default function PricingClient({ data }: { data: PricingData }) {
         {/* App Pricing */}
         <div className="mt-16">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            <h2 className="mb-3 text-3xl font-semibold text-black">
               Plans for Every App
             </h2>
-            <p className="text-gray-600">
+            <p className="text-black/60">
               Start with one app and scale up anytime
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {data.apps.map((app) => (
-              <Card key={app.app_id} className="p-6">
+              <Card key={app.app_id} className="glass-card border border-black/10 p-6">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-                      <Star className="w-6 h-6 text-blue-600" />
+                    <div className="w-12 h-12 rounded-xl bg-black/10 flex items-center justify-center">
+                      <Star className="w-6 h-6 text-black" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{app.name}</h3>
-                      <p className="text-sm text-gray-600">{app.description}</p>
+                      <h3 className="text-xl font-semibold text-black">{app.name}</h3>
+                      <p className="text-sm text-black/60">{app.description}</p>
                     </div>
                   </div>
-                  <Badge className="bg-slate-100 text-slate-700 text-xs">Per App</Badge>
+                  <Badge className="bg-black/10 text-black/70 text-xs">Per App</Badge>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {app.tiers.map((tier) => (
-                    <div key={tier.name} className="rounded-lg border border-gray-200 p-4">
-                      <p className="text-sm font-semibold text-gray-900">{tier.name}</p>
-                      <p className="text-xs text-gray-500 mb-2">{tier.description}</p>
-                      <p className="text-2xl font-bold text-gray-900">
+                    <div key={tier.name} className="rounded-lg border border-black/10 bg-white p-4">
+                      <p className="text-sm font-semibold text-black">{tier.name}</p>
+                      <p className="mb-2 text-xs text-black/50">{tier.description}</p>
+                      <p className="text-2xl font-semibold text-black">
                         {formatPrice(tier.monthly)}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-black/50">
                         /{billingCycle === "monthly" ? "mo" : "yr"}
                       </p>
                     </div>
@@ -295,7 +299,7 @@ export default function PricingClient({ data }: { data: PricingData }) {
                   {app.highlights.map((item) => (
                     <span
                       key={item}
-                      className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700"
+                      className="rounded-full bg-black/10 px-3 py-1 text-xs font-medium text-black/80"
                     >
                       {item}
                     </span>
@@ -308,37 +312,37 @@ export default function PricingClient({ data }: { data: PricingData }) {
 
         {/* Flagship Apps Section */}
         <div className="mt-16">
-          <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+          <Card className="glass-card border border-black/10 bg-white">
             <div className="p-8">
               <div className="text-center mb-8">
-                <Crown className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                <Crown className="mx-auto mb-4 h-12 w-12 text-black" />
+                <h2 className="mb-4 text-3xl font-semibold text-black">
                   Flagship Applications
                 </h2>
-                <p className="text-xl text-gray-600">
+                <p className="text-xl text-black/60">
                   Exclusive AI-powered tools for Flagship subscribers
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="text-center">
-                  <Brain className="w-8 h-8 text-purple-600 mx-auto mb-3" />
-                  <h3 className="font-semibold text-gray-900 mb-2">AI Insights Engine</h3>
-                  <p className="text-sm text-gray-600">
+                  <Brain className="mx-auto mb-3 h-8 w-8 text-black" />
+                  <h3 className="mb-2 font-semibold text-black">AI Insights Engine</h3>
+                  <p className="text-sm text-black/60">
                     Predictive analytics, demand forecasting, and intelligent recommendations
                   </p>
                 </div>
                 <div className="text-center">
-                  <BarChart3 className="w-8 h-8 text-purple-600 mx-auto mb-3" />
-                  <h3 className="font-semibold text-gray-900 mb-2">Advanced Analytics</h3>
-                  <p className="text-sm text-gray-600">
+                  <BarChart3 className="mx-auto mb-3 h-8 w-8 text-black" />
+                  <h3 className="mb-2 font-semibold text-black">Advanced Analytics</h3>
+                  <p className="text-sm text-black/60">
                     Custom dashboards, real-time KPIs, and comprehensive reporting
                   </p>
                 </div>
                 <div className="text-center">
-                  <Code className="w-8 h-8 text-purple-600 mx-auto mb-3" />
-                  <h3 className="font-semibold text-gray-900 mb-2">Developer Platform</h3>
-                  <p className="text-sm text-gray-600">
+                  <Code className="mx-auto mb-3 h-8 w-8 text-black" />
+                  <h3 className="mb-2 font-semibold text-black">Developer Platform</h3>
+                  <p className="text-sm text-black/60">
                     Full API access, webhooks, and custom integrations
                   </p>
                 </div>
@@ -350,44 +354,44 @@ export default function PricingClient({ data }: { data: PricingData }) {
         {/* FAQ Section */}
         <div className="mt-16">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="mb-4 text-3xl font-semibold text-black">
               Frequently Asked Questions
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
+            <Card className="glass-card border border-black/10 p-6">
+              <h3 className="mb-2 font-semibold text-black">
                 Can I change plans anytime?
               </h3>
-              <p className="text-gray-600 text-sm">
+              <p className="text-sm text-black/60">
                 Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately.
               </p>
             </Card>
 
-            <Card className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
+            <Card className="glass-card border border-black/10 p-6">
+              <h3 className="mb-2 font-semibold text-black">
                 Is there a free trial?
               </h3>
-              <p className="text-gray-600 text-sm">
+              <p className="text-sm text-black/60">
                 Yes, all paid plans come with a 14-day free trial. No credit card required to start.
               </p>
             </Card>
 
-            <Card className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
+            <Card className="glass-card border border-black/10 p-6">
+              <h3 className="mb-2 font-semibold text-black">
                 What payment methods do you accept?
               </h3>
-              <p className="text-gray-600 text-sm">
+              <p className="text-sm text-black/60">
                 We accept all major credit cards, PayPal, and bank transfers for Enterprise plans.
               </p>
             </Card>
 
-            <Card className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
+            <Card className="glass-card border border-black/10 p-6">
+              <h3 className="mb-2 font-semibold text-black">
                 Do you offer refunds?
               </h3>
-              <p className="text-gray-600 text-sm">
+              <p className="text-sm text-black/60">
                 Yes, we offer a 30-day money-back guarantee for all paid plans.
               </p>
             </Card>
@@ -396,7 +400,7 @@ export default function PricingClient({ data }: { data: PricingData }) {
 
         {/* CTA Section */}
         <div className="mt-16 text-center">
-          <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8">
+          <Card className="rounded-3xl bg-black p-8 text-white">
             <Sparkles className="w-12 h-12 mx-auto mb-4" />
             <h2 className="text-3xl font-bold mb-4">
               Ready to Scale Your Export Business?
@@ -408,14 +412,15 @@ export default function PricingClient({ data }: { data: PricingData }) {
               <Button
                 size="lg"
                 variant="secondary"
+                className="bg-white text-black hover:bg-white/90"
                 onClick={() => router.push("/contact")}
               >
                 Contact Sales
               </Button>
               <Button
                 size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-600"
+                variant="ghost"
+                className="border border-white/40 bg-white/10 text-white hover:bg-white/20"
                 onClick={() => router.push("/demo")}
               >
                 Schedule Demo

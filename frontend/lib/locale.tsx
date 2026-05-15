@@ -41,6 +41,7 @@ type LocaleContextValue = {
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 const STORAGE_KEY = "mnd_locale_country";
+const LOCKED_COUNTRY_CODE = "KE";
 
 export function flagEmoji(code: string) {
   return code
@@ -49,7 +50,7 @@ export function flagEmoji(code: string) {
 }
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [countryCode, setCountryCode] = useState<string>("US");
+  const [countryCode, setCountryCode] = useState<string>(LOCKED_COUNTRY_CODE);
   const [rates, setRates] = useState<Record<string, number> | null>(null);
 
   const country = useMemo(
@@ -58,17 +59,11 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (saved && COUNTRIES.some((c) => c.code === saved)) {
-      setCountryCode(saved);
-    } else {
-      // Default to Kenya (KE) for KES pricing
-      setCountryCode("KE");
-    }
+    setCountryCode(LOCKED_COUNTRY_CODE);
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, countryCode);
+    window.localStorage.setItem(STORAGE_KEY, LOCKED_COUNTRY_CODE);
   }, [countryCode]);
 
   useEffect(() => {
@@ -106,19 +101,20 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<LocaleContextValue>(
     () => ({
       country,
-      countries: COUNTRIES,
-      setCountryCode,
+      countries: COUNTRIES.filter((c) => c.code === LOCKED_COUNTRY_CODE),
+      setCountryCode: () => setCountryCode(LOCKED_COUNTRY_CODE),
       formatCurrency: (amountUsd: number) => {
         const converted = amountUsd * effectiveRate;
-        return new Intl.NumberFormat(country.locale, {
+        const formatted = new Intl.NumberFormat("en-KE", {
           style: "currency",
-          currency: country.currency,
+          currency: "KES",
           minimumFractionDigits: 0,
           maximumFractionDigits: 0
         }).format(converted);
+        return formatted.replace("KES", "KSH");
       },
       formatNumber: (value: number) =>
-        new Intl.NumberFormat(country.locale, { maximumFractionDigits: 0 }).format(value),
+        new Intl.NumberFormat("en-KE", { maximumFractionDigits: 0 }).format(value),
       formatPercent: (value: number) =>
         new Intl.NumberFormat(country.locale, { style: "percent", maximumFractionDigits: 1 }).format(value),
       flag: (code?: string) => flagEmoji(code ?? country.code)

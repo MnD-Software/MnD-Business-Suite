@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutGrid,
   X,
@@ -12,7 +11,7 @@ import { IconButton } from "@/components/ui/IconButton";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/cn";
-import { hasAnyPermission, hasModule, type Me } from "@/lib/me";
+import { hasAnyPermission, type Me } from "@/lib/me";
 import { Portal } from "@/components/ui/Portal";
 import {
   IconAdmin,
@@ -215,7 +214,7 @@ export function AppLauncher({ me }: { me: Me | null }) {
       }
     ] : [];
 
-    const allowed = APPS.filter((a) => hasAnyPermission(me, a.anyPerms) && (!a.module || hasModule(me, a.module)));
+    const allowed = APPS.filter((a) => !a.href.startsWith("/admin") || hasAnyPermission(me, a.anyPerms));
     // Replace static storefront entry with dynamic one
     const filtered = allowed.filter((a) => a.id !== "storefront");
     if (!me?.org_slug) return filtered;
@@ -229,18 +228,11 @@ export function AppLauncher({ me }: { me: Me | null }) {
       </IconButton>
 
       <Portal>
-        <AnimatePresence>
-          {open && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[1000]">
+        {open && (
+            <div className="fixed inset-0 z-[1000]">
               <div className="absolute inset-0 bg-black/35" onClick={() => setOpen(false)} role="button" aria-label="Close launcher" />
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.99 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.99 }}
-                transition={{ duration: 0.18, ease: [0.2, 0.8, 0.2, 1] }}
-                className="absolute left-1/2 top-[76px] w-[min(920px,calc(100vw-2rem))] -translate-x-1/2"
-              >
-                <Card className="flex max-h-[calc(100vh-6.5rem)] flex-col overflow-hidden p-4">
+              <div className="absolute left-1/2 top-[68px] w-[min(920px,calc(100vw-1rem))] -translate-x-1/2 sm:top-[76px] sm:w-[min(920px,calc(100vw-2rem))]">
+                <Card className="flex max-h-[calc(100dvh-5.5rem)] flex-col overflow-hidden p-3 sm:max-h-[calc(100dvh-6.5rem)] sm:p-4">
                   <div className="flex items-center justify-between gap-3">
                     <div className="text-sm font-semibold tracking-tight">Apps</div>
                     <div className="text-xs text-[hsl(var(--c-muted-2))]">{me?.org_id ? `Org: ${me.org_id}` : ""}</div>
@@ -292,10 +284,9 @@ export function AppLauncher({ me }: { me: Me | null }) {
                     </div>
                   </div>
                 </Card>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           )}
-        </AnimatePresence>
       </Portal>
     </>
   );

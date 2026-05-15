@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+
 from fastapi import APIRouter, Response
 
 from app.api.v1.routes._auth_deps import CurrentAuth
@@ -91,11 +93,13 @@ async def create_user(payload: UserCreateRequest, session: DbSession, auth: Curr
 
 @router.get("/me", response_model=UserMeRead)
 async def me(session: DbSession, auth: CurrentAuth) -> UserMeRead:
-    org = await OrganizationRepository(session).get(auth.org_id)
-    user = await UserRepository(session).get(org_id=auth.org_id, user_id=auth.user_id)
-    roles = await RbacRepository(session).get_user_role_names(user_id=auth.user_id, org_id=auth.org_id)
-    perms = await RbacRepository(session).get_user_permissions(user_id=auth.user_id, org_id=auth.org_id)
-    modules = await ModuleService(session).list_modules(org_id=auth.org_id)
+    org, user, roles, perms, modules = await asyncio.gather(
+        OrganizationRepository(session).get(auth.org_id),
+        UserRepository(session).get(org_id=auth.org_id, user_id=auth.user_id),
+        RbacRepository(session).get_user_role_names(user_id=auth.user_id, org_id=auth.org_id),
+        RbacRepository(session).get_user_permissions(user_id=auth.user_id, org_id=auth.org_id),
+        ModuleService(session).list_modules(org_id=auth.org_id),
+    )
     enabled = sorted([m["module_code"] for m in modules if m["is_enabled"]])
     return UserMeRead(
         org_id=auth.org_id,
@@ -127,11 +131,12 @@ async def update_me(payload: UserUpdateRequest, session: DbSession, auth: Curren
     await session.commit()
     await session.refresh(user)
     
-    # Return updated user info
-    org = await OrganizationRepository(session).get(auth.org_id)
-    roles = await RbacRepository(session).get_user_role_names(user_id=auth.user_id, org_id=auth.org_id)
-    perms = await RbacRepository(session).get_user_permissions(user_id=auth.user_id, org_id=auth.org_id)
-    modules = await ModuleService(session).list_modules(org_id=auth.org_id)
+    org, roles, perms, modules = await asyncio.gather(
+        OrganizationRepository(session).get(auth.org_id),
+        RbacRepository(session).get_user_role_names(user_id=auth.user_id, org_id=auth.org_id),
+        RbacRepository(session).get_user_permissions(user_id=auth.user_id, org_id=auth.org_id),
+        ModuleService(session).list_modules(org_id=auth.org_id),
+    )
     enabled = sorted([m["module_code"] for m in modules if m["is_enabled"]])
     return UserMeRead(
         org_id=auth.org_id,

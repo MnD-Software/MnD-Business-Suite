@@ -1,16 +1,31 @@
 import { NextResponse } from "next/server";
 import { backendUrl, cookieSecure } from "@/lib/env";
+import { fetchBackend } from "@/lib/backend-fetch";
 
 export async function POST(req: Request) {
   const body = await req.json();
 
   try {
-    const res = await fetch(`${backendUrl()}/api/v1/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-      cache: "no-store",
-    });
+    const doLogin = () =>
+      fetchBackend(
+        `${backendUrl()}/api/v1/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        },
+        25000
+      );
+
+    let res: Response;
+    try {
+      res = await doLogin();
+    } catch (error) {
+      const isTimeout = error instanceof Error && error.message.includes("timed out");
+      if (!isTimeout) throw error;
+      // Retry once to absorb cold-start or transient upstream latency.
+      res = await doLogin();
+    }
 
     const data = await res.json().catch(() => null);
     if (!res.ok) {
@@ -41,10 +56,8 @@ export async function POST(req: Request) {
     });
     return out;
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? `Login error: ${error.message}` : "Login error" },
-      { status: 502 }
-    );
+    const isTimeout = error instanceof Error && error.message.includes("timed out");
+    return NextResponse.json({ error: isTimeout ? "Backend request timed out" : "Login error" }, { status: isTimeout ? 504 : 502 });
   }
 }
 

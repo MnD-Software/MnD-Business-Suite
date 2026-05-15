@@ -39,7 +39,7 @@ export function LandingPricingToggle({ bundles }: { bundles: Bundle[] }) {
             {t("pick_bundle")}
           </h2>
         </div>
-        <div className="flex items-center gap-1 md:gap-2 rounded-full bg-white border border-black/10 p-1 shadow-sm">
+        <div className="flex items-center gap-1 md:gap-2 rounded-full bg-white border border-black/20 p-1 shadow-sm">
           <button
             onClick={() => setBillingCycle("monthly")}
             className={`rounded-full px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-semibold transition ${
@@ -66,19 +66,19 @@ export function LandingPricingToggle({ bundles }: { bundles: Bundle[] }) {
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         {bundles.map((bundle) => (
           <Card key={bundle.name} className="glass-card relative overflow-hidden p-4 md:p-6">
-            <div className="absolute inset-0 bg-[linear-gradient(140deg,rgba(15,118,110,0.1),transparent_60%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(140deg,rgba(0,0,0,0.08),transparent_60%)]" />
             <div className="relative space-y-4 md:space-y-6">
               <div className="flex items-start justify-between">
                 <div className="space-y-[2px] md:space-y-[4px]">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-xs md:text-sm font-medium text-emerald-600">KSh</span>
+                    <span className="text-xs md:text-sm font-medium text-black">KSh</span>
                     <p className="text-xl md:text-2xl font-semibold text-black leading-none">{formatPrice(bundle.monthly)}</p>
                   </div>
                   <p className="text-xs uppercase tracking-[0.2em] text-black/50">
                     {t("per_org")}/{billingCycle === "monthly" ? t("month") : t("year")}
                   </p>
                 </div>
-                <div className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 md:px-3 md:py-1 text-xs font-semibold text-emerald-700">
+                <div className="inline-flex items-center rounded-full bg-black/10 px-2 py-0.5 md:px-3 md:py-1 text-xs font-semibold text-black">
                   {bundle.highlight}
                 </div>
               </div>
@@ -95,3 +95,4 @@ export function LandingPricingToggle({ bundles }: { bundles: Bundle[] }) {
     </section>
   );
 }
+

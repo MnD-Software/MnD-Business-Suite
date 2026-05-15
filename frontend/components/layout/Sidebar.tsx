@@ -59,7 +59,7 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "sticky top-4 h-[calc(100vh-2rem)] overflow-hidden rounded-lg border bg-card p-2 shadow-elevate",
+        "h-full overflow-hidden rounded-lg border bg-card p-2 shadow-elevate",
         collapsed ? "w-16" : "w-64"
       )}
     >

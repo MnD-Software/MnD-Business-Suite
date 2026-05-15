@@ -1,17 +1,24 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { backendUrl, cookieSecure } from "@/lib/env";
+import { fetchBackend } from "@/lib/backend-fetch";
 
 export async function POST() {
   const refresh = cookies().get("refresh_token")?.value;
   if (!refresh) return NextResponse.json({ error: "Missing refresh token" }, { status: 401 });
 
-  const res = await fetch(`${backendUrl()}/api/v1/auth/refresh`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh_token: refresh }),
-    cache: "no-store"
-  });
+  let res: Response;
+  try {
+    res = await fetchBackend(`${backendUrl()}/api/v1/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: refresh }),
+    });
+  } catch (error) {
+    const isTimeout = error instanceof Error && error.message.includes("timed out");
+    return NextResponse.json({ error: isTimeout ? "Backend request timed out" : "Refresh failed" }, { status: isTimeout ? 504 : 502 });
+  }
+
   const data = await res.json().catch(() => null);
   if (!res.ok) return NextResponse.json(data ?? { error: "Refresh failed" }, { status: res.status });
 

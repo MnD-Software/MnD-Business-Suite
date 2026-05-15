@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from fastapi import APIRouter
+from fastapi_cache.decorator import cache
 
 from app.api.v1.routes._auth_deps import CurrentAuth
 from app.api.v1.routes._permissions import require_permission
+from app.core.config import settings
 from app.core.deps import DbSession
 from app.schemas.assistant.chat import (
     AnalyticsResponse,
@@ -26,18 +28,21 @@ async def chat(payload: ChatRequest, session: DbSession, auth: CurrentAuth) -> C
 
 
 @router.get("/recommendations", response_model=RecommendationsResponse, dependencies=[require_permission("assistant.use")])
+@cache(expire=settings.assistant_cache_seconds)
 async def recommendations(session: DbSession, auth: CurrentAuth) -> RecommendationsResponse:
     recs = await AssistantService(session).recommendations(org_id=auth.org_id)
     return RecommendationsResponse(recommendations=recs)
 
 
 @router.get("/forecast", response_model=ForecastResponse, dependencies=[require_permission("assistant.use")])
+@cache(expire=settings.assistant_cache_seconds)
 async def forecast(session: DbSession, auth: CurrentAuth) -> ForecastResponse:
     data = await AssistantService(session).forecast(org_id=auth.org_id)
     return ForecastResponse(**data)
 
 
 @router.get("/analytics", response_model=AnalyticsResponse, dependencies=[require_permission("assistant.use")])
+@cache(expire=settings.assistant_cache_seconds)
 async def analytics(session: DbSession, auth: CurrentAuth) -> AnalyticsResponse:
     data = await AssistantService(session).analytics(org_id=auth.org_id)
     return AnalyticsResponse(**data)

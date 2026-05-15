@@ -1,15 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { TopNav } from "@/components/layout/TopNav";
-import { MobileNav } from "@/components/layout/MobileNav";
-import { MobileMenuDrawer } from "@/components/layout/MobileMenuDrawer";
+import { motion, useReducedMotion } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const Sidebar = dynamic(() => import("@/components/layout/Sidebar").then((m) => m.Sidebar), { ssr: false });
+const TopNav = dynamic(() => import("@/components/layout/TopNav").then((m) => m.TopNav), { ssr: false });
+const MobileNav = dynamic(() => import("@/components/layout/MobileNav").then((m) => m.MobileNav), { ssr: false });
+const MobileMenuDrawer = dynamic(
+  () => import("@/components/layout/MobileMenuDrawer").then((m) => m.MobileMenuDrawer),
+  { ssr: false }
+);
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
   return (
     <div className="relative h-[100dvh] overflow-hidden">
       <div className="pointer-events-none absolute inset-0">
@@ -18,18 +24,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="absolute -right-48 top-[-160px] h-[520px] w-[520px] rounded-full bg-[hsl(var(--c-accent-2))]/12 blur-3xl" />
       </div>
 
-      <div className="mx-auto flex h-full max-w-[1440px] gap-4 px-3 py-3 sm:px-4 sm:py-4 lg:px-6">
+      <div className="flex h-[100dvh] w-full gap-3 px-2 py-2 sm:gap-4 sm:px-4 sm:py-4 lg:px-6">
         <div className="hidden lg:block">
           <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((v) => !v)} />
         </div>
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
+        <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-hidden">
           <TopNav onOpenMenu={() => setMobileMenuOpen(true)} />
           <motion.main
-            key="page"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.08, ease: [0.2, 0.8, 0.2, 1] }}
-            className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain pb-[calc(6.5rem+env(safe-area-inset-bottom))] lg:pb-0"
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            transition={reduceMotion ? undefined : { duration: 0.2, ease: "easeOut" }}
+            className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain pb-[calc(6.5rem+env(safe-area-inset-bottom))] pr-1 lg:pb-0 lg:pr-0"
           >
             {children}
           </motion.main>

@@ -71,11 +71,11 @@ export async function getLandingData(): Promise<LandingData> {
         { label: "Active orgs", value: "8,400+" },
         { label: "Active users", value: "42K" },
         { label: "Orders (30d)", value: "18K" },
-        { label: "Revenue tracked", value: "$12.4M" }
+        { label: "Revenue tracked", value: "KSH 12.4M" }
       ],
       live_cards: [
-        { label: "Revenue MTD", value: "$1.2M" },
-        { label: "Avg order value", value: "$460" },
+        { label: "Revenue MTD", value: "KSH 1.2M" },
+        { label: "Avg order value", value: "KSH 460" },
         { label: "Orders today", value: "128" },
         { label: "Low stock alerts", value: "6" }
       ],

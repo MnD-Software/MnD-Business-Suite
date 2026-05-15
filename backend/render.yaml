@@ -7,13 +7,13 @@ services:
     name: mnd-backend
     rootDir: backend
     runtime: python
-    pythonVersion: "3.11"
+    pythonVersion: "3.12"
     
     # Build configuration
     buildCommand: pip install -r requirements.txt
     
     # Start command using PORT environment variable (Render requirement)
-    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers ${WEB_CONCURRENCY:-2}
     
     # Health check for Render's load balancer
     healthCheckPath: /health
@@ -37,19 +37,19 @@ services:
       - key: DEBUG
         value: "false"
       - key: PYTHON_VERSION
-        value: "3.11"
+        value: "3.12"
       - key: LOG_LEVEL
         value: "INFO"
+      - key: WEB_CONCURRENCY
+        value: "2"
       - key: API_V1_PREFIX
         value: "/api/v1"
-      # IMPORTANT: Update these for production
       - key: DATABASE_URL
-        value: "postgresql+asyncpg://postgres:password@db.host:5432/postgres"
+        sync: false
       - key: REDIS_URL
-        value: "redis://redis.host:6379/0"
-      # IMPORTANT: Generate a secure random secret (min 32 characters)
+        sync: false
       - key: JWT_SECRET_KEY
-        value: "CHANGE_ME_TO_A_LONG_RANDOM_SECRET_IN_PRODUCTION"
+        sync: false
       - key: JWT_ISSUER
         value: "mnd-business-suite"
       - key: JWT_AUDIENCE
@@ -62,12 +62,21 @@ services:
         value: "12"
       - key: RATE_LIMIT_DEFAULT
         value: "100/minute"
-      # Update with your actual Vercel frontend URL
       - key: ALLOWED_ORIGINS
-        value: "https://mn-d-business-suite-4ftg.vercel.app"
+        sync: false
       - key: FRONTEND_BASE_URL
-        value: "https://mn-d-business-suite-4ftg.vercel.app"
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
       - key: COOKIE_SECURE
         value: "true"
       - key: COOKIE_SAMESITE
         value: "none"
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: FX_API_KEY
+        sync: false

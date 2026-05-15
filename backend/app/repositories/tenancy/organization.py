@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.errors import NotFoundError
@@ -19,7 +19,10 @@ class OrganizationRepository:
         return org
 
     async def get_by_slug(self, slug: str) -> Organization:
-        res = await self.session.execute(select(Organization).where(Organization.slug == slug))
+        normalized_slug = slug.strip().lower()
+        res = await self.session.execute(
+            select(Organization).where(func.lower(Organization.slug) == normalized_slug)
+        )
         org = res.scalar_one_or_none()
         if org is None:
             raise NotFoundError("Organization not found")

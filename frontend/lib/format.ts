@@ -2,12 +2,13 @@
  * Format a number as Kenyan Shilling (KES) currency
  */
 export function formatCurrency(amount: number, currency: string = "KES"): string {
-  return new Intl.NumberFormat("en-KE", {
+  const formatted = new Intl.NumberFormat("en-KE", {
     style: "currency",
-    currency: currency,
+    currency: "KES",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
+  return formatted.replace("KES", "KSH");
 }
 
 /**

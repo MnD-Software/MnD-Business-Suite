@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     frontend_base_url: str = "http://localhost:3000"
 
     database_url: str = "sqlite+aiosqlite:///./mnd.db"
+    db_pool_size: int = 20
+    db_max_overflow: int = 40
+    db_pool_timeout: int = 30
+    db_pool_recycle_seconds: int = 1800
     redis_url: str = "redis://localhost:6379/0"
     log_level: str = "INFO"
 
@@ -42,6 +46,7 @@ class Settings(BaseSettings):
     fx_api_base: str = "https://openexchangerates.org/api"
     fx_api_key: str = ""
     fx_refresh_minutes: int = 60
+    assistant_cache_seconds: int = 45
 
     # Frontend URL for redirects
     frontend_url: str = "http://localhost:3000"

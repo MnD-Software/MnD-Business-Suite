@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -65,10 +64,12 @@ export default function LoginPage() {
         setConfirmPassword("");
         setError("Registration successful! Please sign in.");
       } else {
+        const normalizedOrgSlug = orgSlug.trim().toLowerCase();
+        const normalizedEmail = email.trim().toLowerCase();
         const res = await fetch("/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ org_slug: orgSlug, email, password }),
+          body: JSON.stringify({ org_slug: normalizedOrgSlug, email: normalizedEmail, password }),
         });
 
         if (!res.ok) {
@@ -76,6 +77,7 @@ export default function LoginPage() {
           throw new Error(data?.error?.message ?? data?.error ?? "Login failed");
         }
 
+        router.prefetch(next as any);
         router.push(next as any);
       }
     } catch (err) {
@@ -87,48 +89,38 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-6 bg-gradient-to-br from-white via-[#f8f8f8] to-[#f0f0f0]">
-      <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
-        className="w-full max-w-md"
-      >
+    <div className="flex min-h-screen items-center justify-center p-6">
+      <div className="w-full max-w-md">
         <div className="mb-6 flex items-center justify-center gap-3">
           <Logo />
           <div className="text-left">
-            <div className="text-lg font-semibold text-black">{isRegister ? "Create your company" : "Secure SME workspace"}</div>
+            <div className="text-lg font-semibold text-fg">{isRegister ? "Create your company" : "Secure SME workspace"}</div>
           </div>
         </div>
 
-        <Card className="glass-card p-6">
-          <AnimatePresence mode="wait">
-            <motion.form
+        <Card className="p-6">
+          <form
               key={isRegister ? "register" : "login"}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.2 }}
-              onSubmit={onSubmit} 
+              onSubmit={onSubmit}
               className="space-y-3"
             >
               {isRegister && (
                 <>
                   <div>
-                    <div className="mb-1 text-xs text-black/50">Company Name</div>
-                    <Input 
-                      value={orgName} 
-                      onChange={(e) => setOrgName(e.target.value)} 
-                      placeholder="My Company Ltd" 
+                    <div className="mb-1 text-xs text-fg-subtle">Company Name</div>
+                    <Input
+                      value={orgName}
+                      onChange={(e) => setOrgName(e.target.value)}
+                      placeholder="My Company Ltd"
                       required
                       autoComplete="off"
                     />
                   </div>
                   <div>
-                    <div className="mb-1 text-xs text-black/50">Company Slug</div>
-                    <Input 
-                      value={orgSlug} 
-                      onChange={(e) => setOrgSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))} 
+                    <div className="mb-1 text-xs text-fg-subtle">Company Slug</div>
+                    <Input
+                      value={orgSlug}
+                      onChange={(e) => setOrgSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
                       placeholder="my-company"
                       title="Lowercase letters, numbers, and hyphens only"
                       required
@@ -136,11 +128,11 @@ export default function LoginPage() {
                     />
                   </div>
                   <div>
-                    <div className="mb-1 text-xs text-black/50">Your Full Name</div>
-                    <Input 
-                      value={fullName} 
-                      onChange={(e) => setFullName(e.target.value)} 
-                      placeholder="John Doe" 
+                    <div className="mb-1 text-xs text-fg-subtle">Your Full Name</div>
+                    <Input
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="John Doe"
                       required
                       autoComplete="off"
                     />
@@ -149,21 +141,21 @@ export default function LoginPage() {
               )}
               {!isRegister && (
                 <div>
-                  <div className="mb-1 text-xs text-black/50">Organization slug</div>
-                  <Input value={orgSlug} onChange={(e) => setOrgSlug(e.target.value)} placeholder="my-company" autoComplete="off" />
+                  <div className="mb-1 text-xs text-fg-subtle">Organization slug</div>
+                  <Input value={orgSlug} onChange={(e) => setOrgSlug(e.target.value)} placeholder="my-company" autoComplete="off" required />
                 </div>
               )}
               <div>
-                <div className="mb-1 text-xs text-black/50">Email</div>
+                <div className="mb-1 text-xs text-fg-subtle">Email</div>
                 <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@company.com" type="email" required autoComplete="off" />
               </div>
               <div>
-                <div className="mb-1 text-xs text-black/50">{isRegister ? "Password" : "Password"}</div>
+                <div className="mb-1 text-xs text-fg-subtle">Password</div>
                 <Input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
+                  placeholder="************"
                   required
                   minLength={isRegister ? 10 : 1}
                   autoComplete="off"
@@ -171,25 +163,24 @@ export default function LoginPage() {
               </div>
               {isRegister && (
                 <div>
-                  <div className="mb-1 text-xs text-black/50">Confirm Password</div>
+                  <div className="mb-1 text-xs text-fg-subtle">Confirm Password</div>
                   <Input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••••••"
+                    placeholder="************"
                     required
                     minLength={10}
                     autoComplete="off"
                   />
                 </div>
               )}
-              {error && <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-3 text-sm">{error}</div>}
+              {error && <div className="rounded-2xl border border-red-500/40 bg-red-500/15 p-3 text-sm text-red-100">{error}</div>}
               <Button type="submit" disabled={loading} className="w-full">
                 {loading ? (isRegister ? "Creating account..." : "Signing in...") : (isRegister ? "Create Company" : "Sign in")}
               </Button>
-            </motion.form>
-          </AnimatePresence>
-          
+            </form>
+
           <div className="mt-4 text-center">
             <button
               type="button"
@@ -197,13 +188,13 @@ export default function LoginPage() {
                 setIsRegister(!isRegister);
                 setError(null);
               }}
-              className="text-sm text-black/50 hover:text-black underline"
+              className="text-sm text-fg-subtle hover:text-fg underline"
             >
               {isRegister ? "Already have an account? Sign in" : "Don't have a company? Register your organization"}
             </button>
           </div>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 }
