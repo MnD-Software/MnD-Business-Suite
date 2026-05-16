@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { IconButton } from "@/components/ui/IconButton";
-import { Input } from "@/components/ui/Input";
-import { api } from "@/lib/api";
+import { Card } from "../../../../components/ui/Card";
+import { Button } from "../../../../components/ui/Button";
+import { IconButton } from "../../../../components/ui/IconButton";
+import { Input } from "../../../../components/ui/Input";
+import { api } from "../../../../lib/api";
 
 type User = {
   id: string;
