@@ -29,11 +29,13 @@ function LoginPageContent() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [noticeType, setNoticeType] = useState<"error" | "success" | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setNoticeType(null);
     setLoading(true);
 
     try {
@@ -71,6 +73,7 @@ function LoginPageContent() {
         setPassword("");
         setConfirmPassword("");
         setError("Registration successful! Please sign in.");
+        setNoticeType("success");
       } else {
         const normalizedOrgSlug = orgSlug.trim().toLowerCase();
         const normalizedEmail = email.trim().toLowerCase();
@@ -91,6 +94,7 @@ function LoginPageContent() {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unexpected error during login";
       setError(message);
+      setNoticeType("error");
     } finally {
       setLoading(false);
     }
@@ -183,7 +187,17 @@ function LoginPageContent() {
                   />
                 </div>
               )}
-              {error && <div className="rounded-2xl border border-red-500/40 bg-red-500/15 p-3 text-sm text-red-100">{error}</div>}
+              {error && (
+                <div
+                  className={
+                    noticeType === "success"
+                      ? "rounded-2xl border border-green-500/45 bg-green-500/15 p-3 text-sm font-medium text-green-700"
+                      : "rounded-2xl border border-red-500/45 bg-red-500/15 p-3 text-sm font-medium text-red-700"
+                  }
+                >
+                  {error}
+                </div>
+              )}
               <Button type="submit" disabled={loading} className="w-full">
                 {loading ? (isRegister ? "Creating account..." : "Signing in...") : (isRegister ? "Create Company" : "Sign in")}
               </Button>

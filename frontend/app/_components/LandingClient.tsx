@@ -68,6 +68,13 @@ const trustPills = [
   { label: "Enterprise Security", icon: ShieldCheck },
 ];
 
+const proofItems = [
+  { label: "Operational Uptime", value: "99.9%" },
+  { label: "Avg. Workflow Speedup", value: "3.2x" },
+  { label: "Audit-ready Controls", value: "SOC-aligned" },
+  { label: "Teams Onboarded", value: "10k+" },
+];
+
 const personaCopy = {
   ceo: "Gain one live control panel for growth, costs, and execution across every team.",
   ops: "Standardize workflows from onboarding to fulfillment with fewer handoffs.",
@@ -281,6 +288,26 @@ export function LandingClient({ landing }: { landing: LandingData }) {
           </div>
         </div>
       </motion.section>
+
+      <section className="mx-auto max-w-6xl px-3 pb-12 sm:px-6 sm:pb-20">
+        <div className="rounded-[2rem] border border-black/10 bg-white p-4 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.25)] sm:p-6 md:p-8">
+          <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-black/55">Proof of Performance</p>
+              <h3 className="text-xl font-semibold text-black md:text-2xl">Built for high-trust execution at scale</h3>
+            </div>
+            <span className="text-xs uppercase tracking-[0.2em] text-black/55">Live operational benchmarks</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            {proofItems.map((itemProof) => (
+              <div key={itemProof.label} className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+                <p className="text-xl font-semibold text-black">{itemProof.value}</p>
+                <p className="mt-1 text-xs uppercase tracking-[0.15em] text-black/65">{itemProof.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <motion.section
         id="flows"
