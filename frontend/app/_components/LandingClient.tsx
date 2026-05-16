@@ -68,10 +68,19 @@ const trustPills = [
   { label: "Enterprise Security", icon: ShieldCheck },
 ];
 
+const personaCopy = {
+  ceo: "Gain one live control panel for growth, costs, and execution across every team.",
+  ops: "Standardize workflows from onboarding to fulfillment with fewer handoffs.",
+  finance: "Unify billing, transactions, and reporting with clean, auditable records.",
+  hr: "Centralize people operations, approvals, and workforce visibility in one secure system.",
+} as const;
+
 export function LandingClient({ landing }: { landing: LandingData }) {
   const { t } = useI18n();
   const pathname = usePathname();
   const [hash, setHash] = useState("");
+  const [persona, setPersona] = useState<keyof typeof personaCopy>("ceo");
+  const [activeApp, setActiveApp] = useState(landing.apps[0]?.name ?? "HR");
 
   useEffect(() => {
     const syncHash = () => setHash(window.location.hash);
@@ -84,6 +93,9 @@ export function LandingClient({ landing }: { landing: LandingData }) {
     <div className="page-transition min-h-screen bg-white pb-24 text-black scroll-smooth md:pb-0">
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-white" />
+        <div className="pointer-events-none absolute -left-28 top-20 -z-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(0,0,0,0.09),transparent_68%)] blur-2xl" />
+        <div className="pointer-events-none absolute -right-20 top-[22rem] -z-10 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(88,140,255,0.22),transparent_70%)] blur-2xl" />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(255,255,255,1),rgba(246,248,252,0.8)_32%,rgba(255,255,255,1)_70%)]" />
 
         <header className="fixed left-0 right-0 top-0 z-50 border-b border-black bg-white">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-3 py-2.5 sm:px-6 sm:py-3">
@@ -121,6 +133,22 @@ export function LandingClient({ landing }: { landing: LandingData }) {
             </div>
             <h1 className="text-[2.05rem] font-semibold leading-[1.05] text-black sm:text-4xl md:text-5xl">{landing.hero_title}</h1>
             <p className="text-[15px] text-black/75 sm:text-lg">{landing.hero_subtitle}</p>
+            <div className="rounded-2xl border border-black/10 bg-white/85 p-3 backdrop-blur-sm sm:p-4">
+              <div className="mb-2 flex flex-wrap gap-1.5">
+                {Object.keys(personaCopy).map((key) => (
+                  <button
+                    key={key}
+                    onClick={() => setPersona(key as keyof typeof personaCopy)}
+                    className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] transition ${
+                      persona === key ? "bg-black text-white" : "bg-black/[0.04] text-black/60 hover:bg-black/[0.08]"
+                    }`}
+                  >
+                    {key}
+                  </button>
+                ))}
+              </div>
+              <p className="text-sm text-black/75">{personaCopy[persona]}</p>
+            </div>
             <div className="grid grid-cols-1 gap-2.5 sm:flex sm:flex-row sm:gap-4">
               <Link href="/subscription/plans"><Button size="lg" className="w-full justify-center">{t("cta_start_bundle")}<ArrowRight className="h-4 w-4" /></Button></Link>
               <Link href="/store"><Button size="lg" variant="secondary" className="w-full justify-center">{t("cta_explore_storefront")}</Button></Link>
@@ -197,7 +225,36 @@ export function LandingClient({ landing }: { landing: LandingData }) {
             <MoveRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+          <Card className="border border-black/10 bg-white p-4 md:p-6">
+            <p className="text-xs uppercase tracking-[0.2em] text-black/55">Ecosystem Map</p>
+            <p className="mt-2 text-sm text-black/70">Hover modules to preview how teams, finance, inventory, and customer operations connect.</p>
+            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+              {landing.apps.map((app) => {
+                const Icon = appIcons[app.name] ?? Boxes;
+                const active = activeApp === app.name;
+                return (
+                  <button
+                    key={`map-${app.name}`}
+                    onMouseEnter={() => setActiveApp(app.name)}
+                    onFocus={() => setActiveApp(app.name)}
+                    className={`rounded-2xl border p-3 text-left transition ${
+                      active ? "border-black bg-black text-white shadow-[0_18px_40px_-25px_rgba(0,0,0,0.65)]" : "border-black/10 bg-white hover:border-black/35"
+                    }`}
+                  >
+                    <Icon className={`h-4 w-4 ${active ? "text-white" : "text-black/75"}`} />
+                    <p className={`mt-2 text-xs font-semibold uppercase tracking-[0.16em] ${active ? "text-white" : "text-black/80"}`}>{app.name}</p>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mt-4 rounded-2xl border border-black/10 bg-black/[0.03] p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-black/55">Active module</p>
+              <p className="mt-1 text-base font-semibold text-black">{activeApp}</p>
+              <p className="mt-1 text-sm text-black/70">{landing.apps.find((app) => app.name === activeApp)?.description}</p>
+            </div>
+          </Card>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
           {landing.apps.map((app, index) => {
             const Icon = appIcons[app.name] ?? Boxes;
             return (
@@ -221,6 +278,7 @@ export function LandingClient({ landing }: { landing: LandingData }) {
               </motion.div>
             );
           })}
+          </div>
         </div>
       </motion.section>
 
