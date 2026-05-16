@@ -13,6 +13,15 @@ const PUBLIC_PATHS = [
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const isStaticAsset =
+    pathname.startsWith("/_next/") ||
+    pathname.startsWith("/brand/") ||
+    pathname.startsWith("/hero/") ||
+    pathname === "/favicon.ico" ||
+    /\.[a-zA-Z0-9]+$/.test(pathname);
+
+  if (isStaticAsset) return NextResponse.next();
+
   const isPublic = PUBLIC_PATHS.some((p) =>
     p === "/" ? pathname === "/" : pathname === p || pathname.startsWith(p)
   );
